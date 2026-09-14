@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kulturskolan Kuben</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000000;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #ffffff;
+        }
+        #presentation-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: none;
+        }
+        #standby-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #050505;
+            text-align: center;
+        }
+        .standby-title {
+            font-size: 3rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            color: #f0f0f0;
+        }
+        .standby-subtitle {
+            font-size: 1.25rem;
+            color: #888888;
+        }
+        .standby-clock {
+            margin-top: 2rem;
+            font-size: 1.5rem;
+            color: #444444;
+        }
+    </style>
+</head>
+<body>
+
+    <iframe 
+        id="presentation-frame" 
+        src="" 
+        allow="autoplay; fullscreen">
+    </iframe>
+
+    <div id="standby-container">
+        <h1 class="standby-title">Kulturskolan Kuben</h1>
+        <p class="standby-subtitle">Aktiv vardagar 07:30 – 16:30</p>
+        <div id="standby-clock" class="standby-clock">--:--</div>
+    </div>
+
+    <script>
+        // KLISTRA IN DIN EMBED-LÄNK FRÅN STEG 1 HÄR NEDANFÖR:
+        const SLIDES_BASE_URL = "https://docs.google.com/presentation/d/e/2PACX-1vRuN-D_V_lpBtlj05bCRdlB6Im4FM5TWquBudW-KnjWlMpa4kz2E-yAiRgc6tPk8hZS0ZZqlSXFWqj0/embeded"
+
+";
+        
+        // Parametrar: starta direkt, loopa, 60 000 ms (1 min) per bild, dölj navigeringslisten
+        const TARGET_URL = SLIDES_BASE_URL + "?start=true&loop=true&delayms=60000&rm=minimal";
+
+        const presentationFrame = document.getElementById("presentation-frame");
+        const standbyContainer = document.getElementById("standby-container");
+        const standbyClock = document.getElementById("standby-clock");
+
+        let isCurrentlyActive = false;
+
+        function checkSchedule() {
+            const now = new Date();
+            const day = now.getDay(); // 0 = Söndag, 1 = Måndag, ..., 5 = Fredag, 6 = Lördag
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const currentMinute = (hours * 60) + minutes;
+
+            // Tidsintervall: 07:30 (450 min) till 16:30 (990 min)
+            const START_MINUTE = (7 * 60) + 30;
+            const END_MINUTE = (16 * 60) + 30;
+
+            const isWeekday = (day >= 1 && day <= 5);
+            const isWithinHours = (currentMinute >= START_MINUTE && currentMinute < END_MINUTE);
+            const shouldBeActive = isWeekday && isWithinHours;
+
+            // Uppdatera klockan i viloläget
+            standbyClock.textContent = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0');
+
+            // Växla vy
+            if (shouldBeActive && !isCurrentlyActive) {
+                presentationFrame.src = TARGET_URL;
+                presentationFrame.style.display = "block";
+                standbyContainer.style.display = "none";
+                isCurrentlyActive = true;
+            } else if (!shouldBeActive && isCurrentlyActive) {
+                // Töm ramen så att videor stoppas och minne frigörs
+                presentationFrame.src = "";
+                presentationFrame.style.display = "none";
+                standbyContainer.style.display = "flex";
+                isCurrentlyActive = false;
+            }
+        }
+
+        checkSchedule();
+        setInterval(checkSchedule, 15000); // Kontrollera var 15:e sekund
+    </script>
+</body>
+</html>
