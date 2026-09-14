@@ -76,8 +76,8 @@
         // Korrigerad Google Slides-inbäddningslänk (slutar på /embed)
         const SLIDES_BASE_URL = "https://docs.google.com/presentation/d/e/2PACX-1vRuN-D_V_lpBtlj05bCRdlB6Im4FM5TWquBudW-KnjWlMpa4kz2E-yAiRgc6tPk8hZS0ZZqlSXFWqj0/embed";
         
-        // Parametrar: starta direkt, loopa, 60 000 ms (1 min) per bild, dölj navigeringslisten
-        const TARGET_URL = SLIDES_BASE_URL + "?start=true&loop=true&delayms=60000&rm=minimal";
+        // Parametrar: starta direkt, loopa, 5 000 ms (5 sec) per bild, dölj navigeringslisten
+        const TARGET_URL = SLIDES_BASE_URL + "?start=true&loop=true&delayms=5000&rm=minimal";
 
         const presentationFrame = document.getElementById("presentation-frame");
         const standbyContainer = document.getElementById("standby-container");
